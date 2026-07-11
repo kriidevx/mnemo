@@ -2,7 +2,7 @@ import { DarkTheme, Tabs, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import { Text, type ColorValue } from 'react-native';
+import { Pressable, Text, View, type ColorValue } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { DynamicIsland } from '@/components/dynamic-island';
@@ -21,6 +21,28 @@ const OLED = {
     primary: '#FFA000',
   },
 };
+
+export function ErrorBoundary({ error, retry }: { error: Error; retry: () => Promise<void> }) {
+  return (
+    <View style={{ flex: 1, backgroundColor: C.bg, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 16 }}>
+      <Text style={{ fontSize: 40 }}>◉</Text>
+      <Text style={{ color: C.text, fontSize: 18, fontWeight: '700' }}>Something went wrong</Text>
+      <Text style={{ color: C.textTertiary, fontSize: 12, textAlign: 'center' }} numberOfLines={4}>
+        {error.message}
+      </Text>
+      <Pressable
+        onPress={retry}
+        style={({ pressed }) => ({
+          backgroundColor: pressed ? '#CC8000' : '#FFA000',
+          borderRadius: 24,
+          paddingHorizontal: 28,
+          paddingVertical: 12,
+        })}>
+        <Text style={{ color: '#000', fontWeight: '700' }}>Try again</Text>
+      </Pressable>
+    </View>
+  );
+}
 
 function TabIcon({ glyph, color }: { glyph: string; color: ColorValue }) {
   return <Text style={{ fontSize: 20, color, lineHeight: 24 }}>{glyph}</Text>;
