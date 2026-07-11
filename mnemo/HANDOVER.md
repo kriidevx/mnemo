@@ -59,15 +59,15 @@ session?.close();
 
 ### 4. Context triggers (Dynamic Island demo)
 ```ts
-const ranked = queryPerson('Aarav');           // ranked by recency × confidence × type priority
-useIsland.getState().show('Opening WhatsApp → Aarav', ranked);
+const ranked = queryPerson('Rohan');           // ranked by recency × confidence × type priority
+useIsland.getState().show('Opening WhatsApp → Rohan', ranked);
 const urgent = expiringPromises();             // red-glow cards
 const clash = conflicts();                     // conflicting atoms, render dashed/faded
 ```
 
 ### 5. Generate — Brief Me
 ```ts
-const brief = await generateBrief('Swapna', 'English');
+const brief = await generateBrief('Priya', 'English');
 // null = no atoms → show "Nothing notable" (honesty, never hallucinate)
 // {title, lastInteraction, openPromises[], decisions[], talkingPoints[]}
 ```
@@ -123,15 +123,15 @@ await loadGemma();
 ```ts
 const d = dashboardData();   // {todayCards, expiring, peopleYouOwe, financial, conflicts, health}
 const digest = await dailyDigest('English');  // works offline (template fallback)
-const results = searchAtoms('aquastar quote'); // FTS-style, includeArchived option
+const results = searchAtoms('zenith quote'); // FTS-style, includeArchived option
 ```
 
 ### 13. Ambient capture sources
 ```ts
 await captureClipboard();                       // clipboard → atoms (auto-stored)
 await captureImage(true);                       // camera → Scan & Remember (auto-stored)
-await simulateNotification('WhatsApp', 'Aarav bhai, kal tak quote bhej dena ₹4200');
-const { title, atoms } = simulateAppOpen('Aarav');  // feed to useIsland().show(title, atoms)
+await simulateNotification('WhatsApp', 'Rohan bhai, kal tak quote bhej dena ₹4200');
+const { title, atoms } = simulateAppOpen('Rohan');  // feed to useIsland().show(title, atoms)
 ```
 
 ### 14. Live Translate (cross-language bridge)
@@ -144,7 +144,7 @@ t?.sendAudioChunk(base64Pcm16k); t?.close();
 
 ### Demo fixtures
 ```ts
-seedDemo();    // loads the PRD demo narrative (Aarav ₹4200, Swapna launch, conflict pair)
+seedDemo();    // loads the PRD demo narrative (Rohan ₹4200, Priya launch, conflict pair)
 wipeMemory();  // clean slate
 ```
 

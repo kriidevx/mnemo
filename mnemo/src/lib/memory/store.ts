@@ -124,7 +124,7 @@ function entKey(a: MemoryAtom): string[] {
   return [...a.entities.people, ...a.entities.orgs].map((e) => e.toLowerCase());
 }
 
-// Honorifics/suffixes stripped so "Aarav bhai" == "Aarav", "Swapna ji" == "Swapna".
+// Honorifics/suffixes stripped so "Rohan bhai" == "Rohan", "Priya ji" == "Priya".
 const HONORIFICS = /\b(bhai|bhaiya|ji|anna|akka|garu|sir|madam|amma|appa|da|na)\b/g;
 
 export function entityMatch(a: string, b: string): boolean {
