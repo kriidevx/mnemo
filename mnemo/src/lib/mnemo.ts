@@ -48,5 +48,20 @@ export type { HandoffEntry, AgentName } from './orchestrator';
 export { getApiKey, setApiKey, cloudAvailable } from './gemini';
 export { MODELS } from './models';
 
+// ---- dashboard + digest + search ----
+export { dashboardData } from './agents/dashboard';
+export type { DashboardData } from './agents/dashboard';
+export { dailyDigest } from './agents/digest';
+export type { DailyDigest } from './agents/digest';
+export { searchAtoms } from './memory/search';
+export { entityMatch } from './memory/store';
+
+// ---- capture sources ----
+export { captureClipboard, captureImage, simulateNotification, simulateAppOpen } from './capture/sources';
+
+// ---- live translate ----
+export { startLiveTranslate } from './voice/live-translate';
+export type { LiveTranslateSession, LiveTranslateCallbacks } from './voice/live-translate';
+
 // ---- demo fixtures ----
 export { seedDemo, wipeMemory, DEMO_ATOMS } from './demo-seed';

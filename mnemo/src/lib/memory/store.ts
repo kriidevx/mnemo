@@ -98,7 +98,7 @@ function linkAndDetectConflicts(newAtoms: MemoryAtom[], existing: MemoryAtom[]) 
     for (let i = 0; i < updatedExisting.length; i++) {
       const b = updatedExisting[i];
       if (b.archived) continue;
-      const shared = entKey(b).some((e) => aEnts.includes(e));
+      const shared = entKey(b).some((e) => aEnts.some((x) => entityMatch(x, e)));
       if (!shared) continue;
       if (!a.linked_atoms.includes(b.id)) a.linked_atoms = [...a.linked_atoms, b.id];
       if (!b.linked_atoms.includes(a.id))
@@ -122,4 +122,15 @@ function linkAndDetectConflicts(newAtoms: MemoryAtom[], existing: MemoryAtom[]) 
 
 function entKey(a: MemoryAtom): string[] {
   return [...a.entities.people, ...a.entities.orgs].map((e) => e.toLowerCase());
+}
+
+// Honorifics/suffixes stripped so "Aarav bhai" == "Aarav", "Swapna ji" == "Swapna".
+const HONORIFICS = /\b(bhai|bhaiya|ji|anna|akka|garu|sir|madam|amma|appa|da|na)\b/g;
+
+export function entityMatch(a: string, b: string): boolean {
+  const norm = (s: string) => s.toLowerCase().replace(HONORIFICS, '').replace(/\s+/g, ' ').trim();
+  const na = norm(a);
+  const nb = norm(b);
+  if (!na || !nb) return false;
+  return na === nb || na.startsWith(`${nb} `) || nb.startsWith(`${na} `);
 }
