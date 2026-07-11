@@ -9,11 +9,11 @@ import { useHandoffLog, type HandoffEntry } from '@/lib/mnemo';
 
 const LEVEL_STYLE: Record<HandoffEntry['level'], { color: string; label: string }> = {
   info: { color: C.textSecondary, label: 'INFO' },
-  handoff: { color: '#4A90D9', label: 'HANDOFF' },
-  escalation: { color: '#FFA000', label: 'ESCALATE' },
-  conflict: { color: '#FF453A', label: 'CONFLICT' },
-  error: { color: '#FF453A', label: 'ERROR' },
-  fallback: { color: '#FFD60A', label: 'FALLBACK' },
+  handoff: { color: C.blue, label: 'HANDOFF' },
+  escalation: { color: C.amber, label: 'ESCALATE' },
+  conflict: { color: C.danger, label: 'CONFLICT' },
+  error: { color: C.danger, label: 'ERROR' },
+  fallback: { color: '#B08800', label: 'FALLBACK' },
 };
 
 const AGENT_LABEL: Record<string, string> = {
@@ -81,16 +81,18 @@ export default function AgentsScreen() {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: C.bg },
-  title: { color: C.text, fontSize: 24, fontWeight: '800', marginTop: 12, marginHorizontal: 20 },
-  subtitle: { color: C.textSecondary, fontSize: 13, marginHorizontal: 20, marginTop: 2, marginBottom: 10 },
+  title: { color: C.text, fontSize: 22, fontWeight: '800', marginTop: 12, marginHorizontal: 20 },
+  subtitle: { color: C.textSecondary, fontSize: 12.5, marginHorizontal: 20, marginTop: 3, marginBottom: 10 },
   empty: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 40 },
   emptyTxt: { color: C.textTertiary, fontSize: 14, textAlign: 'center', lineHeight: 20 },
   list: { paddingBottom: 24 },
   row: {
-    marginHorizontal: 16,
+    marginHorizontal: 20,
     marginVertical: 4,
-    backgroundColor: 'rgba(28,28,30,0.8)',
+    backgroundColor: C.card,
     borderRadius: 14,
+    borderWidth: 1,
+    borderColor: C.cardBorder,
     borderLeftWidth: 3,
     padding: 12,
   },

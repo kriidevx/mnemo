@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "mnemo",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "light",
     "ios": {
       "icon": "./assets/expo.icon"
     },
@@ -33,7 +33,7 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#000000",
+          "backgroundColor": "#FAFAF8",
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
@@ -55,6 +55,6 @@
       "typedRoutes": true,
       "reactCompiler": true
     },
-    "backgroundColor": "#000000"
+    "backgroundColor": "#FAFAF8"
   }
 }

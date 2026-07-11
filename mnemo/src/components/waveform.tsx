@@ -10,11 +10,14 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+import { C } from '@/constants/mnemo-theme';
+
 // Voice-journal waveform (spec §MODE 6) — GPU-driven bars via Reanimated.
-// Gradient stays in the blue/teal family (no purple, per design override).
+// Prototype recording palette: blue/teal family on the light canvas.
 
 const BAR_COUNT = 24;
-const COLORS = ['#4A90D9', '#3AA8C9', '#2BB8A8'];
+const COLORS = [C.blue, C.sky, C.teal];
+const IDLE = 'rgba(0,0,0,0.12)';
 
 function Bar({ index, active }: { index: number; active: boolean }) {
   const h = useSharedValue(6);
@@ -39,7 +42,7 @@ function Bar({ index, active }: { index: number; active: boolean }) {
   }, [active, index, h]);
 
   const style = useAnimatedStyle(() => ({ height: h.value }));
-  return <Animated.View style={[styles.bar, { backgroundColor: COLORS[index % COLORS.length] }, style]} />;
+  return <Animated.View style={[styles.bar, { backgroundColor: active ? COLORS[index % COLORS.length] : IDLE }, style]} />;
 }
 
 export function Waveform({ active }: { active: boolean }) {

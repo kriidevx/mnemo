@@ -63,21 +63,27 @@ export function expiringPromises(): RankedAtom[] {
   return rank(urgent, now);
 }
 
-/** Financial ledger — owed to you vs you owe, computed on-device only. */
-export function financialLedger() {
-  const atoms = liveAtoms(useMemoryStore.getState().atoms).filter(
+/** Financial ledger — owed to you vs you owe, computed on-device only.
+ *  Pass `source` to derive from an already-subscribed atom array, and
+ *  `log: false` when calling from render paths (handoff() writes a store). */
+export function financialLedger(source?: MemoryAtom[], log = true) {
+  const atoms = liveAtoms(source ?? useMemoryStore.getState().atoms).filter(
     (a) => a.type === 'financial' || a.entities.money
   );
   const oweRe = /\b(owe|dena|pay|payable|udhaar liya)\b/i;
-  const owedRe = /\b(owed|lena|receive|receivable|pending from|udhaar diya)\b/i;
+  const owedRe = /\b(owed|lena|receive|receivable|pending|outstanding|udhaar diya)\b/i;
   const iOwe: RankedAtom[] = [];
   const owedToMe: RankedAtom[] = [];
+  const unclassified: RankedAtom[] = [];
   for (const a of rank(atoms)) {
     if (oweRe.test(a.content) && !owedRe.test(a.content)) iOwe.push(a);
-    else owedToMe.push(a);
+    else if (owedRe.test(a.content)) owedToMe.push(a);
+    else unclassified.push(a); // money mentioned, direction unknown — never inflate totals
   }
-  handoff('reasoner', 'antigravity', 'financial ledger computed on-device', `${iOwe.length} payable, ${owedToMe.length} receivable`, 'info');
-  return { iOwe, owedToMe };
+  if (log) {
+    handoff('reasoner', 'antigravity', 'financial ledger computed on-device', `${iOwe.length} payable, ${owedToMe.length} receivable`, 'info');
+  }
+  return { iOwe, owedToMe, unclassified };
 }
 
 /** Everything from the past 7 days — feeds "My Week" and recap video. */

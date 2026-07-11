@@ -25,7 +25,7 @@ export async function generateBrief(person: string, language = 'English'): Promi
     return null;
   }
   const ai = await getGenAI();
-  if (!ai) throw new Error('No API key set — add it in Settings');
+  if (!ai) throw new Error('No API key set — add it in Studio → Setup');
   handoff('generator', 'flash-cloud', `generate brief for ${person} (${atoms.length} atoms)`);
   const res = await ai.models.generateContent({
     model: MODELS.flash,

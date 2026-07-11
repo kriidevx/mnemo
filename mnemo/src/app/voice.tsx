@@ -17,8 +17,8 @@ import {
   type MemoryAtom,
 } from '@/lib/mnemo';
 
-// MODE 6 — Voice Journal. Speak in any language (code-switching welcome);
-// one multimodal Flash call transcribes + extracts; atoms drop into the feed.
+// Voice Journal (prototype): centered waveform, white round mic button with
+// state-colored ring, HEARD transcript card, session-extracted atoms below.
 
 type Phase = 'idle' | 'recording' | 'processing';
 
@@ -56,7 +56,7 @@ export default function VoiceScreen() {
         setSessionAtoms((prev) => [...atoms, ...prev]);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       } else if (!t) {
-        setError('Could not process audio — check API key in Studio → Settings.');
+        setError('Could not process audio — check API key in Studio → Setup.');
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Processing failed');
@@ -69,38 +69,40 @@ export default function VoiceScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
-      <Text style={styles.title}>Voice Journal</Text>
-      <Text style={styles.subtitle}>
-        {recording ? 'Listening — speak freely, any language' : phase === 'processing' ? 'Structuring your memories…' : 'Hindi, Kannada, Tamil, Telugu, English — ek saath bhi chalega'}
-      </Text>
+      <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+        <Text style={styles.title}>Voice Journal</Text>
+        <Text style={styles.subtitle}>
+          {recording
+            ? 'Listening — speak freely, any language'
+            : phase === 'processing'
+              ? 'Structuring your memories…'
+              : 'Hindi, Kannada, Tamil, Telugu, English — ek saath bhi chalega'}
+        </Text>
 
-      <View style={styles.waveWrap}>
-        <Waveform active={recording} />
-      </View>
-
-      <Pressable
-        onPress={recording ? stop : start}
-        disabled={phase === 'processing'}
-        style={({ pressed }) => [
-          styles.micBtn,
-          recording && styles.micActive,
-          (pressed || phase === 'processing') && { opacity: 0.7 },
-        ]}>
-        <Text style={styles.micTxt}>{recording ? 'Stop' : phase === 'processing' ? '…' : 'Speak'}</Text>
-      </Pressable>
-
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-      {transcript ? (
-        <View style={styles.transcriptBox}>
-          <Text style={styles.transcriptLabel}>HEARD</Text>
-          <Text style={styles.transcript}>{transcript}</Text>
+        <View style={styles.waveWrap}>
+          <Waveform active={recording} />
         </View>
-      ) : null}
 
-      <ScrollView contentContainerStyle={styles.feed}>
-        {sessionAtoms.length > 0 ? (
-          <Text style={styles.feedTitle}>Extracted this session</Text>
+        <Pressable
+          onPress={recording ? stop : start}
+          disabled={phase === 'processing'}
+          style={({ pressed }) => [
+            styles.micBtn,
+            { borderColor: recording ? C.danger : C.blue },
+            (pressed || phase === 'processing') && { opacity: 0.7 },
+          ]}>
+          <Text style={styles.micTxt}>{recording ? 'Stop' : phase === 'processing' ? '…' : 'Speak'}</Text>
+        </Pressable>
+
+        {error ? <Text style={styles.error}>{error}</Text> : null}
+        {transcript ? (
+          <View style={styles.transcriptBox}>
+            <Text style={styles.transcriptLabel}>HEARD</Text>
+            <Text style={styles.transcript}>{transcript}</Text>
+          </View>
         ) : null}
+
+        {sessionAtoms.length > 0 ? <Text style={styles.feedTitle}>Extracted this session</Text> : null}
         {sessionAtoms.map((a) => (
           <AtomCard key={a.id} atom={a} eff={a.confidence} />
         ))}
@@ -111,42 +113,47 @@ export default function VoiceScreen() {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: C.bg },
-  title: { color: C.text, fontSize: 24, fontWeight: '800', textAlign: 'center', marginTop: 12, letterSpacing: 0.3 },
-  subtitle: { color: C.textSecondary, fontSize: 13, textAlign: 'center', marginTop: 4, paddingHorizontal: 32 },
-  waveWrap: { marginTop: 28, marginBottom: 12 },
+  scroll: { paddingBottom: 32 },
+  title: { color: C.text, fontSize: 22, fontWeight: '800', textAlign: 'center', marginTop: 12 },
+  subtitle: { color: C.textSecondary, fontSize: 12.5, textAlign: 'center', marginTop: 5, paddingHorizontal: 40, lineHeight: 17 },
+  waveWrap: { marginTop: 22, marginBottom: 4 },
   micBtn: {
     alignSelf: 'center',
     width: 92,
     height: 92,
     borderRadius: 46,
-    backgroundColor: 'rgba(28,28,30,0.9)',
+    backgroundColor: C.card,
     borderWidth: 1.5,
-    borderColor: '#4A90D9',
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 4,
   },
-  micActive: { borderColor: '#FF453A', backgroundColor: 'rgba(255,69,58,0.12)' },
-  micTxt: { color: C.text, fontSize: 16, fontWeight: '700' },
-  error: { color: '#FF453A', fontSize: 12, textAlign: 'center', marginTop: 12, paddingHorizontal: 24 },
+  micTxt: { color: C.text, fontSize: 15, fontWeight: '700' },
+  error: { color: C.danger, fontSize: 12, textAlign: 'center', marginTop: 12, paddingHorizontal: 24 },
   transcriptBox: {
-    marginHorizontal: 16,
-    marginTop: 18,
-    backgroundColor: 'rgba(28,28,30,0.8)',
+    marginHorizontal: 20,
+    marginTop: 22,
+    backgroundColor: C.card,
     borderRadius: 16,
     padding: 14,
-    borderWidth: 0.5,
-    borderColor: C.separator,
+    borderWidth: 1,
+    borderColor: C.cardBorder,
   },
-  transcriptLabel: { color: C.textTertiary, fontSize: 10, fontWeight: '800', letterSpacing: 1.5, marginBottom: 4 },
-  transcript: { color: C.text, fontSize: 15, lineHeight: 21 },
-  feed: { paddingTop: 12, paddingBottom: 24 },
+  transcriptLabel: { color: C.textTertiary, fontSize: 10, fontWeight: '800', letterSpacing: 1, marginBottom: 5 },
+  transcript: { color: C.text, fontSize: 14.5, lineHeight: 20 },
   feedTitle: {
-    color: C.textSecondary,
-    fontSize: 12,
-    fontWeight: '700',
-    letterSpacing: 1.4,
+    color: C.textTertiary,
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 1,
     textTransform: 'uppercase',
-    marginHorizontal: 20,
-    marginBottom: 6,
+    marginHorizontal: 22,
+    marginTop: 20,
+    marginBottom: 8,
   },
 });
