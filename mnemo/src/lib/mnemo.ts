@@ -38,7 +38,7 @@ export { startLiveJournal } from './voice/live-session';
 export type { LiveJournal, LiveJournalCallbacks } from './voice/live-session';
 
 // ---- on-device Gemma ----
-export { gemmaModelStatus, loadGemma, gemmaLoaded } from './local/gemma';
+export { gemmaModelStatus, loadGemma, gemmaLoaded, downloadGemmaModel, cancelGemmaDownload } from './local/gemma';
 
 // ---- orchestration (Antigravity layer) ----
 export { useHandoffLog, handoff, runPipeline } from './orchestrator';

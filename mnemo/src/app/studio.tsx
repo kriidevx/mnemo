@@ -17,11 +17,14 @@ import * as Haptics from 'expo-haptics';
 import { C } from '@/constants/mnemo-theme';
 import {
   dailyDigest,
+  downloadGemmaModel,
   financialLedger,
+  gemmaModelStatus,
   generateBrief,
   generateRecapVideo,
   generateWeekDeck,
   getApiKey,
+  loadGemma,
   readAloud,
   setApiKey,
   translateMyDay,
@@ -51,6 +54,9 @@ export default function StudioScreen() {
   const [showLedger, setShowLedger] = useState(false);
   const [keyDraft, setKeyDraft] = useState('');
   const [keyStatus, setKeyStatus] = useState<string | null>(null);
+  const [modelUrl, setModelUrl] = useState('');
+  const [modelStatus, setModelStatus] = useState<string | null>(null);
+  const [dlPct, setDlPct] = useState<number | null>(null);
 
   const guard = async (name: string, fn: () => Promise<void>) => {
     if (busy) return;
@@ -234,6 +240,62 @@ export default function StudioScreen() {
           </View>
           <Btn full label="Check key status" onPress={() => guard('check', async () => setKeyStatus((await getApiKey()) ? 'Key present ✓' : 'No key set'))} />
           {keyStatus ? <Text style={styles.muted}>{keyStatus}</Text> : null}
+        </Section>
+
+        {/* ---- On-device Gemma ---- */}
+        <Section title="On-Device Gemma" hint="Offline extraction — the airplane-mode brain">
+          <Btn
+            full
+            label="Check model status"
+            onPress={() =>
+              guard('gemma-status', async () => {
+                const s = await gemmaModelStatus();
+                setModelStatus(
+                  !s.nativeModule
+                    ? 'Native module missing — use the APK build, not Expo Go.'
+                    : s.loaded
+                      ? 'Gemma loaded — offline extraction live ✓'
+                      : s.modelFile
+                        ? 'Weights found on device — will load on first offline capture ✓'
+                        : `No weights yet. adb push target:\n${s.adbPushTarget}`
+                );
+              })
+            }
+          />
+          {modelStatus ? <Text style={styles.muted}>{modelStatus}</Text> : null}
+          <View style={styles.inline}>
+            <TextInput
+              value={modelUrl}
+              onChangeText={setModelUrl}
+              style={[styles.input, { flex: 1 }]}
+              placeholder="GGUF URL (Hugging Face)…"
+              placeholderTextColor={C.textTertiary}
+              autoCapitalize="none"
+            />
+            <Btn
+              label={dlPct != null ? `${Math.round(dlPct * 100)}%` : 'Download'}
+              onPress={() =>
+                guard('gemma-dl', async () => {
+                  if (!modelUrl.trim()) throw new Error('Paste a GGUF download URL first');
+                  setDlPct(0);
+                  const r = await downloadGemmaModel(modelUrl.trim(), setDlPct);
+                  setDlPct(null);
+                  if (!r.ok) throw new Error(r.error ?? 'download failed');
+                  setModelStatus('Weights downloaded ✓');
+                })
+              }
+            />
+          </View>
+          <Btn
+            full
+            label="Load Gemma into memory now"
+            onPress={() =>
+              guard('gemma-load', async () => {
+                const ok = await loadGemma();
+                setModelStatus(ok ? 'Gemma loaded — offline extraction live ✓' : 'Load failed — check weights + APK build');
+              })
+            }
+          />
         </Section>
       </ScrollView>
     </SafeAreaView>
