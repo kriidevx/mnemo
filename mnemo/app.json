@@ -46,7 +46,10 @@
           "cameraPermission": "Mnemo scans whiteboards, receipts and notes into memories.",
           "microphonePermission": false
         }
-      ]
+      ],
+      "expo-font",
+      "expo-web-browser",
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true,
