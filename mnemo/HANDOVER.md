@@ -119,6 +119,29 @@ const s = await gemmaModelStatus();   // {nativeModule, modelFile, loaded, path}
 await loadGemma();
 ```
 
+### 12. Life Dashboard data + daily digest + search
+```ts
+const d = dashboardData();   // {todayCards, expiring, peopleYouOwe, financial, conflicts, health}
+const digest = await dailyDigest('English');  // works offline (template fallback)
+const results = searchAtoms('aquastar quote'); // FTS-style, includeArchived option
+```
+
+### 13. Ambient capture sources
+```ts
+await captureClipboard();                       // clipboard → atoms (auto-stored)
+await captureImage(true);                       // camera → Scan & Remember (auto-stored)
+await simulateNotification('WhatsApp', 'Aarav bhai, kal tak quote bhej dena ₹4200');
+const { title, atoms } = simulateAppOpen('Aarav');  // feed to useIsland().show(title, atoms)
+```
+
+### 14. Live Translate (cross-language bridge)
+```ts
+const t = await startLiveTranslate('English', {
+  onSource: (txt) => {...}, onTranslated: (txt) => {...}, onError: (m) => {...},
+});
+t?.sendAudioChunk(base64Pcm16k); t?.close();
+```
+
 ### Demo fixtures
 ```ts
 seedDemo();    // loads the PRD demo narrative (Aarav ₹4200, Swapna launch, conflict pair)
